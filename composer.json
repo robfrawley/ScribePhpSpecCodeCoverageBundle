@@ -1,13 +1,15 @@
 {
-    "name" : "henrikbjorn/phpspec-code-coverage",
-    "description" : "Integrates CodeCoverage with PhpSpec",
-    "license" : "MIT",
+    "name":         "scribenet/phpspec-code-coverage",
+    "description":  "Integrates CodeCoverage with PhpSpec",
+    "license":      "MIT",
 
-    "autoload" : {
-        "psr-0" : { "PhpSpec\\Extension\\" : "src" }
+    "autoload": {
+        "psr-0": { 
+            "PhpSpec\\Extension\\": "src" 
+        }
     },
 
-    "require" : {
+    "require": {
         "php"                       : ">=5.3.3",
         "phpspec/phpspec"           : "dev-master",
         "phpunit/php-code-coverage" : "~1.2"
@@ -15,7 +17,7 @@
 
     "extra" : {
         "branch-alias" : {
-            "dev-master" : "1.0.x-dev"
+            "dev-master"            : "1.0.x-dev"
         }
     }
 }
