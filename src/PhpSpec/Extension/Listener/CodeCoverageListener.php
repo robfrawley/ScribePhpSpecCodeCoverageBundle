@@ -63,11 +63,15 @@ class CodeCoverageListener implements \Symfony\Component\EventDispatcher\EventSu
     public function setIO(IO $io)
     {
         $this->io = $io;
+
+        return $this->io;
     }
 
     public function setOptions(array $options)
     {
         $this->options = $options + $this->options;
+
+        return $this->options;
     }
 
     /**

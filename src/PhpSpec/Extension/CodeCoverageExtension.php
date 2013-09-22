@@ -4,6 +4,8 @@ namespace PhpSpec\Extension;
 
 use PhpSpec\ServiceContainer;
 use PhpSpec\Extension\Listener\CodeCoverageListener;
+use PHP_CodeCoverage_Report_Clover,
+    PHP_CodeCoverage_Report_HTML;
 
 /**
  * Injects a Event Subscriber into the EventDispatcher. The Subscriber
@@ -24,28 +26,19 @@ class CodeCoverageExtension implements \PhpSpec\Extension\ExtensionInterface
             return new \PHP_CodeCoverage(null, $container->get('code_coverage.filter'));
         });
 
-        $container->setShared('code_coverage.report', function ($container) {
-            $options = $container->getParam('code_coverage');
+        $reports = ['HTML', 'Clover'];
+        foreach ($reports as $r) {
+            $callable = 'PHP_CodeCoverage_Report_'.$r;
+            $rl = strtolower($r);
+            $container->setShared('code_coverage.report.'.$rl, new $callable());
 
-            switch ($options['format']) {
-                case 'clover':
-                    return new \PHP_CodeCoverage_Report_Clover();
-                case 'php':
-                    return new \PHP_CodeCoverage_Report_PHP();
-                case 'text':
-                    return new \PHP_CodeCoverage_Report_Text(new \PHPUnit_Util_Printer());
-                case 'html':
-                default:
-                    return new \PHP_CodeCoverage_Report_HTML();
-            }
-        });
+            $container->setShared('event_dispatcher.listeners.code_coverage_'.$rl, function ($container) {
+                $listener = new CodeCoverageListener($container->get('code_coverage'), $container->get('code_coverage.report.'.$rl));
+                $listener->setIO($container->get('console.io'));
+                $listener->setOptions($container->getParam('code_coverage', array()));
 
-        $container->setShared('event_dispatcher.listeners.code_coverage', function ($container) {
-            $listener = new CodeCoverageListener($container->get('code_coverage'), $container->get('code_coverage.report'));
-            $listener->setIO($container->get('console.io'));
-            $listener->setOptions($container->getParam('code_coverage', array()));
-
-            return $listener;
-        });
+                return $listener;
+            });
+        }
     }
 }
